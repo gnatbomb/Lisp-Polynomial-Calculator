@@ -19,18 +19,18 @@
 )
 ;Question 1 remove-identities
 ;
-; reduce-add(expr1 expr2)
+; reduce-sum(op expr1 expr2)
 ;	if (eq expr1 0) then expr2
 ;	else 
 ;		if (eq expr2 0) then expr1
-;		else cons(+ expr1 expr2)
+;		else cons(op expr1 expr2)
 ;
-(defun reduce-add (expr1 expr2)
+(defun reduce-sum (op expr1 expr2)
 	(if (eq expr1 0)
 		expr2
 		(if (eq expr2 0)
 			expr1
-			(list '+ expr1 expr2)
+			(list op expr1 expr2)
 		)
 	)
 )
@@ -39,7 +39,7 @@
 ;	if (eq expr1 1) then expr2
 ;	else 
 ;		if (eq expr2 1) then expr1
-;		else cons(* expr1 expr2)
+;		else list(* expr1 expr2)
 ;
 (defun reduce-mult (expr1 expr2)
 	(if (eq expr1 1)
@@ -52,14 +52,34 @@
 )
 ;
 ; reduce-expression(op expr1 expr2)
-;	if (equal op +) then reduce-add(expr1 expr2)
+;	if (eq op +) then reduce-add(expr1 expr2)
 ;	else 
 ;		if (equal op *) then reduce-mult(expr1 expr2)
-;		else (cons op expr1 expr2)
+;		else (list op expr1 expr2)
+;
+(defun reduce-expression (op expr1 expr2)
+	(if (member op '(+ -))
+		(reduce-sum op expr1 expr2)
+		(if (eq op '*)
+			(reduce-mult expr1 expr2)
+			(list op expr1 expr2)
+		)
+	)
+)
 ;
 ; remove-identities(E)
-;	if null cdr(E) then NIL
+;	if (atom E) then E
 ;	else (
-		reduce-expression(car(E) remove-identities(cdar(E)) remove-identities(cddr(E)))
+;		reduce-expression(car(E) remove-identities(cdar(E)) remove-identities(cddr(E)))
+;	)
+;
+(defun remove-identities (E)
+	(if (atom E)
+		E
+		(reduce-expression 
+			(car E) 
+			(remove-identities (cadr E)) 
+			(remove-identities (caddr E))
+		)
+	)
 )
-;	
