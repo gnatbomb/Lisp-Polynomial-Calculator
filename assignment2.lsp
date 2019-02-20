@@ -95,9 +95,9 @@
 ;		else (list op expr1 expr2)
 ;
 (defun reduce-zeroes (op expr1 expr2)
-	(if (and (eq op '-) (eq expr1 expr2))
+	(if (and (eq op '-) (equal expr1 expr2))
 		0
-		(if (and (equal op *) (member 0 '(expr1 expr2))
+		(if (and (equal op '*) (or (eq expr1 0) (eq expr2 0)))
 			0
 			(list op expr1 expr2)
 		)
@@ -114,8 +114,37 @@
 		E
 		(reduce-zeroes 
 			(car E) 
-			(remove-identities (cadr E)) 
-			(remove-identities (caddr E))
+			(simplify-zeroes (cadr E)) 
+			(simplify-zeroes (caddr E))
+		)
+	)
+)
+;
+;
+; Question 3 simplify
+;
+; simplify (E)
+;	if (null E) then E 
+;	else let*
+;		(	
+;		(r (remove-identities E))
+;		(s (simplify-zeroes r))
+;		if (eq E s) then E 
+;		else (simplify s)
+;		)
+;		
+(defun simplify (E)
+	(if (null E)
+		E
+		(let*
+			(
+			(r (remove-identities E))
+			(s (simplify-zeroes r))
+			)
+			(if (equal E s)
+				s
+				(simplify s)
+			)
 		)
 	)
 )
