@@ -148,3 +148,14 @@
 		)
 	)
 )
+;
+;
+; Question 3 Bonus
+; I believe that the order of calls to remove-identities (henceforth called RI) and simplify-zeroes (henceforth 
+;	called SZ) does not matter.
+; Note that the domains of RI and SZ are mutually exclusive, meaning that no binary expression which RI affects
+; 	will be affected by SZ, and vice versa.
+; ASOC there is an expression E which has different results based on the call order to RI and SZ.
+; For this to be the case, there must exist a binary expression e which can be modified both by RI and by SZ.
+; Contradiction.
+; Therefore, order of calling RI and SZ doesn't matter.
