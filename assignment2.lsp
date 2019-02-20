@@ -201,14 +201,14 @@
 )
 ;
 ; sum-neighbours (L)
-;	if (null (cddr L) then nil
+;	if (null (cdr L) then nil
 ;	else then
 ;		if (eq (cdar L) (cdadr L)) then (cons (cons (+ (caar L) (caadr L)) (cdar L)) (sum-neighbours (cddr L)))
 ;		else (cons (car L) (sum-neighbours (cdr L))
 ;
 (defun sum-neighbours (L)
-	(if (null (cddr L))
-		nil
+	(if (null (cdr L))
+		L
 		(if (eq (cdar L) (cdadr L))
 			(cons (cons (+ (caar L) (caadr L)) (cdar L)) (sum-neighbours (cddr L)))
 			(cons (car L) (sum-neighbours (cdr L)))
@@ -216,12 +216,36 @@
 	)
 )
 ;
-; combine (L)
 ;
 ; normalize (P)
 ;		sort-by-exponent (remove-zero-coefficient P)
-;		
 ;
 (defun normalize (P)
-	(sort-by-exponent (remove-zero-coefficient P))
+	(remove-zero-coefficient (sum-neighbours (sort-by-exponent P)))
+)
+;
+;
+; Question 5 polynomial
+;
+; Question 5.1.1 poly-add
+;
+; poly-add (p1 p2)
+;	normalize (append p1 p2)
+(defun poly-add (p1 p2)
+	(normalize (append p1 p2))
+)
+;
+;
+; Question 5.1.2 poly-subtract
+;
+; poly-neg (P)
+;	(cons (- 0 (car P)) (cdr P))
+(defun poly-neg (P)
+	(cons (- 0 (car P)) (cdr P))
+)
+;
+; poly-subtract (p1 p2)
+;	poly-add (p1 (mapcar 'poly-neg p2))
+(defun poly-subtract (p1 p2)
+	(poly-add p1 (mapcar 'poly-neg p2))
 )
