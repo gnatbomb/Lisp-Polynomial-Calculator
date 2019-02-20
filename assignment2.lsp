@@ -1,5 +1,11 @@
 ; CMPUT 325 Winter 2019 Assignment 2
 ; CCID nbombard Student name Nicholas Bombardieri
+(defun test-case (ID Test Result)
+    (if (equal Test Result)
+        (format nil "Test ~S OK" ID)
+        (format nil "FAIL: Test ~S expected ~S got ~S" ID Result Test)
+    )
+)
 ;
 ; Question 1 issorted
 ;
@@ -159,3 +165,63 @@
 ; For this to be the case, there must exist a binary expression e which can be modified both by RI and by SZ.
 ; Contradiction.
 ; Therefore, order of calling RI and SZ doesn't matter.
+;
+;
+; Question 4 Normalize
+;
+;
+; remove-zero-coefficient (L)
+; 	if (null L) then NIL
+;	else
+;		if (eq (caar L) 0) then remove-zero-coefficient (cdr L)
+;		else then cons (car L) (remove-zero-coefficient (cdr L))
+;
+(defun remove-zero-coefficient (L)
+	(if (null L)
+		NIL
+		(if (eq (caar L) 0)
+		(remove-zero-coefficient (cdr L))
+		(cons (car L) (remove-zero-coefficient (cdr L)))
+		)
+	)
+)
+;
+; larger-exponent (L1 L2)
+;	(> (cdr L1) (cdr L2))
+;
+(defun larger-exponent (L1 L2)
+	(> (cdr L1) (cdr L2))
+)
+;
+; sort-by-exponent (L)
+; 	(sort L 'larger-exponent)
+;
+(defun sort-by-exponent (L)
+	(sort L 'larger-exponent)
+)
+;
+; sum-neighbours (L)
+;	if (null (cddr L) then nil
+;	else then
+;		if (eq (cdar L) (cdadr L)) then (cons (cons (+ (caar L) (caadr L)) (cdar L)) (sum-neighbours (cddr L)))
+;		else (cons (car L) (sum-neighbours (cdr L))
+;
+(defun sum-neighbours (L)
+	(if (null (cddr L))
+		nil
+		(if (eq (cdar L) (cdadr L))
+			(cons (cons (+ (caar L) (caadr L)) (cdar L)) (sum-neighbours (cddr L)))
+			(cons (car L) (sum-neighbours (cdr L)))
+		)
+	)
+)
+;
+; combine (L)
+;
+; normalize (P)
+;		sort-by-exponent (remove-zero-coefficient P)
+;		
+;
+(defun normalize (P)
+	(sort-by-exponent (remove-zero-coefficient P))
+)
