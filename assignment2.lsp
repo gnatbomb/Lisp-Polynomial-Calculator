@@ -249,3 +249,34 @@
 (defun poly-subtract (p1 p2)
 	(poly-add p1 (mapcar 'poly-neg p2))
 )
+;
+;
+; Question 5.2 poly-multiply
+;
+; multiply (p1 p2)									
+;	(cons (* (car p1) (car p2)) (+ (car p1) (car p2)))
+;
+(defun multiply (p1 p2)
+	(cons (* (car p1) (car p2)) (+ (car p1) (car p2)))
+)
+;
+; poly-multiply-helper (p1 p2)
+;	if (null p1) then nil
+;	else (append (mapcar (lambda (x) (multiply x (car p1)) p2) (poly-multiply (cdr p1) (p2))))
+(defun poly-multiply-helper (p1 p2)
+	(if (null p1)
+		nil
+		(if (null p2) 
+			nil
+			(append (mapcar (lambda (x) 
+					(funcall #'multiply x (car p1)) )p2) 
+					(poly-multiply (cdr p1) p2))
+		)
+	)
+)
+;
+; poly-multiply (p1 p2)
+;	normalize(poly-multiply-helper p1 p2)
+(defun poly-multiply (p1 p2)
+	(normalize (poly-multiply-helper p1 p2))
+)
