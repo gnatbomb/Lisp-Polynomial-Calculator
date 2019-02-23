@@ -230,7 +230,7 @@
 ; Question 5.1.1 poly-add
 ;
 ; poly-add (p1 p2)
-;	normalize (append p1 p2)
+;	normalize (cons p1 p2)
 (defun poly-add (p1 p2)
 	(normalize (append p1 p2))
 )
@@ -254,10 +254,10 @@
 ; Question 5.2 poly-multiply
 ;
 ; multiply (p1 p2)									
-;	(cons (* (car p1) (car p2)) (+ (car p1) (car p2)))
+;	(cons (* (car p1) (car p2)) (+ (cdr p1) (cdr p2)))
 ;
 (defun multiply (p1 p2)
-	(cons (* (car p1) (car p2)) (+ (car p1) (car p2)))
+	(cons (* (car p1) (car p2)) (+ (cdr p1) (cdr p2)))
 )
 ;
 ; poly-multiply-helper (p1 p2)
@@ -279,4 +279,103 @@
 ;	normalize(poly-multiply-helper p1 p2)
 (defun poly-multiply (p1 p2)
 	(normalize (poly-multiply-helper p1 p2))
+)
+;
+;
+; Question 5.3 polynomial
+;
+; translate L
+;	if (null L) then nil
+;	else if (null (atom (car L))) then (list (translate (car L)) (translate (cdr L)))
+;		 else if (integerp (car L)) then (list (cons (car L) 0) (translate (cdr L)))
+; 			  else if (equal 'x (car L)) then (list (cons 1 1) (translate (cdr L)))
+;			  	   else (translate (cdr L))
+(defun trans (L)
+	(if (null L)
+		nil
+		(if (null (atom L))
+			(cons (trans (car L)) (trans (cdr L)))
+			(if (integerp L) 
+				(cons L 0)
+				(if (equal 'x L)
+					(cons 1 1)
+					L
+				)				
+			)
+		)
+	)
+)
+;
+;
+(defun translate (L)
+	(if (atom L)
+		(cons (trans L) nil)
+		(trans L)
+	)
+)
+;
+;
+; is-pair p1
+;	if (atom p1) then false
+;	else (and (atom (car p1)) (atom (cdr p1)))
+(defun is-pair (p1)
+	(if (atom p1)
+		nil
+		(and (integerp (car p1)) (integerp (cdr p1)))
+	)
+
+)
+;
+; is-poly p1
+;	if (null p1) then true
+;	else if (atom p1) then false
+;		 else then (and (is-pair (car p1)) (is-poly (cdr p1)))
+;
+(defun is-poly (p1)
+	(if (null p1)
+		T
+		(if (atom p1)
+			nil
+			(and (is-pair (car p1)) (is-poly (cdr p1)))
+		)
+	)
+)
+;
+; Poly-helper P
+; 	if (null P) then P
+;	else if (null (atom P)) then (cons (poly-helper (car P)) (poly-helper (cdr P)))
+;		 else if (eq '+ p) then (poly-add (poly-helper (cadr P)) (poly-helper (caddr P)))
+;			  else if (eq '- p) then (poly-subtract (poly-helper (cadr P)) (poly-helper (caddr P)))
+;					else if (eq '* p) then (poly-multiply (poly-helper (cadr P)) (poly-helper (caddr P)))
+;						 else P
+(defun poly-helper (P)
+	(if (null P)
+		P
+		(if (is-poly p)
+			P
+			(if (null (atom (car P)))
+				(cons (poly-helper (car P)) (poly-helper (cdr P)))
+				(if (eq '+ (car p)) 
+					(poly-add (poly-helper (cadr P)) (poly-helper (caddr P)))
+					(if (eq '- (car p))
+						(poly-subtract (cons (poly-helper (cadr P)) nil) (cons (poly-helper (caddr P)) nil))
+						(if (eq '* (car p))
+							(poly-multiply (cons (poly-helper (cadr P)) nil) (cons (poly-helper (caddr P)) nil))
+							P
+						)				
+					)
+				)
+			)
+		)
+	)
+)
+;
+; Polynomial P
+;	if (null P) then P
+;	else (poly-helper (translate P))
+(defun polynomial (P)
+	(if (null P)
+		P
+		(poly-helper (translate P))
+	)
 )
