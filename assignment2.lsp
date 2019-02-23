@@ -290,15 +290,15 @@
 ;		 else if (integerp (car L)) then (list (cons (car L) 0) (translate (cdr L)))
 ; 			  else if (equal 'x (car L)) then (list (cons 1 1) (translate (cdr L)))
 ;			  	   else (translate (cdr L))
-(defun trans (L)
+(defun translate (L)
 	(if (null L)
 		nil
 		(if (null (atom L))
-			(cons (trans (car L)) (trans (cdr L)))
+			(cons (translate (car L)) (translate (cdr L)))
 			(if (integerp L) 
-				(cons L 0)
+				(cons (cons L 0) nil)
 				(if (equal 'x L)
-					(cons 1 1)
+					(cons (cons 1 1) nil)
 					L
 				)				
 			)
@@ -307,12 +307,12 @@
 )
 ;
 ;
-(defun translate (L)
-	(if (atom L)
-		(cons (trans L) nil)
-		(trans L)
-	)
-)
+;(defun translate (L)
+;	(if (atom L)
+;		(cons (trans L) nil)
+;		(trans L)
+;	)
+;)
 ;
 ;
 ; is-pair p1
@@ -341,6 +341,15 @@
 	)
 )
 ;
+;
+(defun makepair (L)
+	(if (is-poly L)
+		L
+		(cons L nil)
+	)
+)
+;
+;
 ; Poly-helper P
 ; 	if (null P) then P
 ;	else if (null (atom P)) then (cons (poly-helper (car P)) (poly-helper (cdr P)))
@@ -356,11 +365,11 @@
 			(if (null (atom (car P)))
 				(cons (poly-helper (car P)) (poly-helper (cdr P)))
 				(if (eq '+ (car p)) 
-					(poly-add (poly-helper (cadr P)) (poly-helper (caddr P)))
+					(poly-add (makepair (poly-helper (cadr P))) (makepair (poly-helper (caddr P))))
 					(if (eq '- (car p))
-						(poly-subtract (cons (poly-helper (cadr P)) nil) (cons (poly-helper (caddr P)) nil))
+						(poly-subtract (poly-helper (cadr P)) (poly-helper (caddr P)))
 						(if (eq '* (car p))
-							(poly-multiply (cons (poly-helper (cadr P)) nil) (cons (poly-helper (caddr P)) nil))
+							(poly-multiply (poly-helper (cadr P)) (poly-helper (caddr P)))
 							P
 						)				
 					)
