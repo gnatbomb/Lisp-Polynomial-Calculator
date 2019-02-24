@@ -1,28 +1,7 @@
 ; CMPUT 325 Winter 2019 Assignment 2
 ; CCID nbombard Student name Nicholas Bombardieri
-(defun test-case (ID Test Result)
-    (if (equal Test Result)
-        (format nil "Test ~S OK" ID)
-        (format nil "FAIL: Test ~S expected ~S got ~S" ID Result Test)
-    )
-)
 ;
-; Question 1 issorted
 ;
-; issorted(L)
-;	if null (cdr L) then T					#if the next element is nil, then list is sorted
-;	else if (> (car L) (car (cdr L))) then NIL		#if the current front element is > next element, list is not sorted. return nil.
-;	else issorted(cdr L)					#recursive call on list excluding first element
-;
-(defun issorted (L)
-	(if (null (cdr L))
-		T
-		(if (>= (car L) (cadr L))
-			NIL
-			(issorted (cdr L))
-		)
-	)
-)
 ;Question 1 remove-identities
 ;
 ; reduce-sum(op expr1 expr2)
@@ -488,3 +467,4 @@
 		)
 	)
 )
+
