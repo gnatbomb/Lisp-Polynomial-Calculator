@@ -388,3 +388,103 @@
 		(poly-helper (translate P))
 	)
 )
+;
+;
+; Question 6 Print-pexpr
+;
+;
+; concat p1 p2
+;	concatenate 'string p1 p2
+(defun concat (p1 p2)
+	(concatenate 'string p1 p2)
+)
+;
+;
+; concatlist L1
+;	if (null L1) then L1
+;	else (concat (car l1) (concatlist (cdr l1)))
+(defun concatlist (l1)
+	(if (null L1)
+		L1
+		(concat (car L1) (concatlist (cdr L1)))
+	)
+)
+;
+; get-sign p1
+;	if (>= p1 0) then (string-downcase " + ")
+;	else then (string-downcase " - ")
+;
+(defun get-sign (p1)
+	(if (>= p1 0)
+		(string-downcase " + ")
+		(string-downcase " - ")
+	)
+)
+;
+; 
+; get-abs p1
+;	if (< p1 0) then (- 0 p1)
+;	else p1
+;
+(defun get-abs (p1)
+	(if (< p1 0) 
+		(- 0 p1)
+		p1
+	)
+)
+;
+;
+; get-value p1
+;	if (eq (cdr p1) 0) then (write-to-string (get-abs p1))
+;	else (concat (car p1) (cdr p1))
+;
+;
+(defun get-value (p1)
+	(if (eq (cdr p1) 0)
+		(write-to-string (get-abs (car p1)))
+		(if (eq 1 (car p1))
+			(if (eq (cdr p1) 1)
+				(string-downcase "x")
+				(concat (string-downcase "x^") (write-to-string (cdr p1)))
+			)
+			(if (eq (cdr p1) 1)
+				(concat (write-to-string (get-abs (car p1))) (string-downcase "x"))
+				(concat (write-to-string (get-abs (car p1))) (concat (string-downcase "x^") (write-to-string (cdr p1))))
+			)
+		)
+	)
+)
+;
+; print-it p1
+;	(concat (get-sign (car p1)) (get-value p1))
+(defun print-it (p1)
+	(concat (get-sign (car p1)) (get-value p1))
+)
+;
+; print-first p1
+;	if (< (car p1) 0) then (concat (write-to-string "-") (get-value p1))
+(defun print-first (p1)
+	(if (< (car p1) 0)
+		(concat (write-to-string '-) (get-value (cons (get-abs (car p1)) (cdr p1))))
+		(get-value p1)
+	)
+)
+;	
+;
+;
+;
+; print-pexpr P
+;	if (null p) then (write-to-string 0)
+;	else (mapcar print-it P)
+;
+(defun print-pexpr (P)
+	(if (null p)
+		(write-to-string 0)
+		(let* 
+			(
+				(L (cons (print-first (car p)) (mapcar 'print-it (cdr P))))
+			)
+		(concatlist L)
+		)
+	)
+)
